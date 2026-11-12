@@ -1,18 +1,25 @@
 # rdna3-inference-ledger
 
-Measured results from a two-month optimization campaign (Sep 28 – Nov 11, 2026) serving a
+Measured results from a two-month optimization campaign (Sep 28 – Nov 12, 2026) serving a
 **Qwen3.8 Flash-Next MoE** checkpoint (IQ3_S, mixed q8_0/bf16 pack) on a single
 **RX 7900 XTX** (gfx1100 / RDNA3, 24 GiB), with a HIP inference engine — a fork of
 [Strata](https://github.com/Niko1221/Strata) (llama.cpp-derived lineage) plus a later
 independent core study.
 
-**~110 recorded experiments: ~20 adopted, ~80 rejected — every rejection closed with a paired
-measurement.** The rejected corpus is the asset. RDNA3 optimization advice is dominated by CUDA
+**~125 recorded experiments: ~20 adopted, ~85 rejected with paired measurements.** The rejected corpus is the asset. RDNA3 optimization advice is dominated by CUDA
 folklore transferred by analogy, and most of it does not survive contact with this hardware:
 NVIDIA's own Q8_0 multi-column layout measured **−17 to −22% on RDNA3**; a 22.7%-fewer-bytes KV
 format measured **−24% on prefill**; "kernel that wins in isolation" measured **−1.75 to −3.34%
 end-to-end**. None of that was guessable. All of it was cheap to close once measured under a
 fixed protocol.
+
+## Start here
+
+- **[Where we are](where-we-are.md)** — the plain-language guide: how generation works, what we
+  made faster, which doors are measured shut, and **what transfers to Qwen 4** (three tiers).
+- **[Campaign update Nov 11/12](campaign-2026-11-12.md)** — the newest arc: a correctness
+  mystery settled by a noise floor, a performance question closed by arithmetic, and the
+  session-lookup idea chased from paper claim to drift-matched refutation.
 
 ## The arc in three numbers
 
