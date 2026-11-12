@@ -75,3 +75,32 @@ Every rule above cost one window to learn and saved at least one afterwards. The
 ran *after* all twelve rules were in force closed twelve experiments with zero wasted windows —
 including two closes (audit-only, no build) and one bench-gate close that never touched
 production. **The instrument compounds faster than the kernels.**
+
+## Added Nov 12 (the 0056–0062 campaigns)
+
+13. **The slot-1 freshness artifact**: the first request after an instance start runs ~12%
+    faster than every later slot. Any baseline in slot 1 is systematically wrong — one
+    candidate "won every block, +13–15%, CI above zero" and the drift-matched rerun reversed
+    it to −10–13%. **The structural fix is a trailing twin**: a stock re-run of the identical
+    token stream in the LAST slot measures position drift directly; judge the candidate
+    against its own slot. The drift floor measured ±0.5% — tight enough to resolve 2%.
+14. **Within-process beats cross-instance, and the floors are not interchangeable**:
+    cross-instance A–A floors measured 12–60% per block on this fixture class; the
+    within-process floor measured 8–33% (free-running roles) and ±0.5% (forced-identical
+    token streams). Any 2%-class claim needs the forced-identical form — the engine must
+    replay the baseline's committed ids (a follow pipe), not merely run the same config.
+15. **A gate can be technically satisfied and still measure the confound**: the freshness
+    gate (dump mtime must move past a baseline) was correctly refusing every run because the
+    baseline was captured AFTER the dump was written (the engine writes before the serve
+    layer transmits the response). The refusal message with the raw
+    `mtime_ns`/`started_ns` values pinpointed it in one look — **print the raw numbers in
+    gate refusals**, not just the verdict.
+16. **A diagnostic write must never fail the request**: the first follow-screen lost its
+    blocks because the engine `return`-ed on a failure to write a *diagnostic* file (a
+    relative path, unresolvable from the engine's cwd). Diagnostic paths fail → log and
+    continue; and absolutize every path you hand to another process.
+17. **Executor disclosure under quota loss**: when the local-model runner's upstream account
+    is quota-blocked, disclose the actual executor per packet (frontier vs local model) —
+    never silently move a coding campaign to a different executor. (The local path itself
+    works: the runner over the minder proxy serves from the local model; only the raw CLI
+    hits the external billing account.)
