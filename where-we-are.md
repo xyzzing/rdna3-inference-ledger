@@ -37,7 +37,7 @@ Two tricks make decode survivable:
 
 | | count |
 |---|---|
-| Recorded experiments | **~110** |
+| Recorded experiments | **~125** |
 | Adopted into the deployed stack | ~20 |
 | Rejected with paired measurements | **~85** |
 | Timing windows run | one at a time, always with a pre-registered gate |
