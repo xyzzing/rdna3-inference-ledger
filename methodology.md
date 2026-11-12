@@ -23,7 +23,7 @@ every number quoted across this repo (because ratio wording is where optimizatio
    perturbation. No performance claim is promoted from a trace alone.
 5. **Correctness gates come first and are bitwise where achievable.** The strongest negatives
    here are bitwise-perfect prototypes that still lost on speed (grouped multi-shape GEMV:
-   9/9 outputs exactly equal, 0.90× latency ratio — closed at the bench gate without spending
+   9/9 outputs exactly equal, 0.90× latency ratio (≈1.11× throughput — faster, but the gate needed ≥2×) — closed at the bench gate without spending
    a serve window).
 6. **Engagement verification before verdicts.** Grep the arm's engine log for the route's
    annunciator before trusting any A/B result. One entire window (0046a) was VOID because the
@@ -37,7 +37,7 @@ Every ambiguous figure in this repo, with numerator/denominator/scope:
 
 | Figure | Actual definition | Direction / reading |
 |---|---|---|
-| Grouped-GEMV "0.90× median, 0.72× best" | **grouped_time ÷ baseline_time** per family×ncols config; baseline = 8 back-to-back per-tensor GEMV launches timed as one event span; grouped = one descriptor-table launch; interleaved ABBA per rep, **min-of-12** per arm; K-quant synthetic weights, fixed seed | **Latency ratio, lower is better**; the predeclared bar was grouped ≤ 0.5× baseline. NOT a speedup — "0.90×" means the grouped prototype was slower |
+| Grouped-GEMV "0.90× median, 0.72× best" | **grouped_time ÷ baseline_time** per family×ncols config; baseline = 8 back-to-back per-tensor GEMV launches timed as one event span; grouped = one descriptor-table launch; interleaved ABBA per rep, **min-of-12** per arm; K-quant synthetic weights, fixed seed | **Latency ratio, lower is better**; the predeclared bar was grouped ≤ 0.5× baseline (i.e. ≥2× faster, the one-launch-over-N hypothesis's whole point). On this definition 0.90× = 10% less latency (≈1.11× throughput) and 0.72× = 28% less (≈1.39×) — the prototype WAS faster in every config (raw: e.g. 0.1520→0.1094 ms), just far short of ≥2×. The close: real-but-insufficient, not slower |
 | "parity bitwise 9/9 (max_rel 0)" | max_rel over ALL member outputs, grouped vs per-tensor baseline, identical weights/activation | exactness evidence, not performance |
 | 72.7% device busy (single request) | rocprof busy-union ÷ decode-burst span (one pass, 94K, burst 2,723 ms) | **regime-specific**: single-request decode. NOT comparable to the multi-request figure below |
 | "65% host-fed" (older figure) | 1 − busy over a multi-request serve burst | different serving regime; both figures stand, do not mix them |
@@ -61,3 +61,33 @@ Every ambiguous figure in this repo, with numerator/denominator/scope:
   time mislead when admission-prefill kernels interleave with decode on adjacent streams.
 
 See [lessons/measurement.md](lessons/measurement.md) for the fuller rule list with the stories behind them.
+
+## Corrections log
+
+**Nov 12, 2026 — after an external review of commit 49aa1d9.** The reviewer distinguished
+checkable arithmetic from reported measurements; five corrections applied:
+
+1. **Grouped-GEMV interpretation reversed** (this page's ratio ledger, rejected/, open-upstream/):
+   on the published definition (grouped_time ÷ baseline_time, lower is better), the prototype's
+   0.90× median / 0.72× best meant 10–28% LESS latency (≈1.11–1.39× throughput) — it was faster
+   in every config, not slower. The rejection stands on the real reason: far below the
+   predeclared ≥2× (≤0.50×) gate. The raw per-config rows were re-checked before rewording
+   (e.g. baseline 0.1520 ms → grouped 0.1094 ms).
+2. **The first token-matched window's positive sign withdrawn** (campaign page): the naive
+   candidate-vs-free-baseline pairing was inflated — the free-running baseline runs
+   systematically slower (~15–25%) than any forced role, so it flatters any candidate. The
+   published reconciling block row (slot/arm/follow/committed/wall) is in the campaign page;
+   the drift-matched negative stands (+10–13% slower, 14/15 and 10/10 blocks, floor ±0.5%).
+3. **WMMA summary split** (where-we-are): the select scorer (10–11× kernel, +8.7–11.2% e2e) and
+   prompt attention (+22.8% prefill @128K) were conflated in one summary table.
+4. **ONECOMMIT arithmetic tightened** (campaign page): 43 windows × 0.273–0.35 ms = 12.9–15.0 ms
+   = 0.42–0.48% of the 3,102 ms decode wall (the 2% bar needs 60.8 ms). The older page's
+   output-change attribution now links directly to the superseding controlled result.
+5. **"Serialization floor" softened** (where-we-are): the 72.7% device-busy figure is one
+   94K single-request pass; busy is not optimality — the trace localizes where to look, it does
+   not bound the busy portion's headroom. Decode-rate figures are now labeled by workload
+   (@1K peak vs @94K deployment) wherever they appear together.
+
+The reviewer's confirmation is recorded: the lookup-bypass close survives review — conversions
+occurred on the intended edit workload and the implemented bypass still lost on matched
+committed tokens (14/15 dev, 10/10 held-out). Scope wording uses "all implemented forms".

@@ -1,8 +1,8 @@
 # Where we are — the plain-language guide
 
 *Everything below is measured on one machine: a Ryzen 9 7900X + **RX 7900 XTX** (24 GB), serving
-**Qwen3.8 Flash-Next** (a Mixture-of-Experts model) from a 96-byte-per-weight-class quantized
-pack on NVMe. Numbers are wall-clock, measured, and reproducible per [methodology.md](methodology.md).*
+**Qwen3.8 Flash-Next** (a Mixture-of-Experts model) from a mixed 3–6-bit quantized
+pack (IQ3_S experts; Q6_K/Q5_K/Q4_K dense projections) on NVMe. Numbers are wall-clock, measured, and reproducible per [methodology.md](methodology.md).*
 
 ---
 
@@ -13,7 +13,7 @@ When you send a long prompt, two very different things happen:
 ```mermaid
 flowchart LR
     A["📄 YOUR PROMPT<br/>(up to 94,000 tokens)"] --> B["**PREFILL**<br/>read the whole document<br/>~3,400 tok/s<br/><i>compute-bound</i>"]
-    B --> C["**DECODE**<br/>write the answer<br/>one token at a time<br/>~45–100 tok/s<br/><i>memory-bound</i>"]
+    B --> C["**DECODE**<br/>write the answer<br/>one token at a time<br/>~100 tok/s @1K depth; 43–47 @94K<br/>(distinct workloads)<br/><i>memory-bound</i>"]
     C --> D["✍️ YOUR ANSWER"]
 ```
 
@@ -49,8 +49,8 @@ Two tricks make decode survivable:
 |---|---|---|
 | Quantized-GEMM prefill path (MMQ) | prefill reads the prompt with integer math | **+112% prefill** |
 | hipBLASLt tuning table for gfx1100 | the GPU's GEMM library had no tuned settings for this card; we measured 32 | **+82% prefill @128K** (merged upstream) |
-| Tensor-core attention (WMMA) | attention scoring on matrix cores instead of shader cores | **10–11× kernel**, +22.8% prefill @128K |
-| Prompt-attention port | the newer-card attention kernel, back-ported to RDNA3 | **+22.8% prefill @128K** |
+| Tensor-core attention, select scorer (WMMA) | block-scoring attention candidates on matrix cores | **10–11× kernel**, +8.7–11.2% prefill @128K end-to-end |
+| Prompt-attention port (WMMA) | the newer-card full-attention kernel, back-ported to RDNA3 | **+22.8% prefill @128K** (attention's share of prefill: 27% → 9%) |
 | ROUTE_TAIL_SKIP | skip loading experts that no token in the window routed to | **+14–19% decode** — the biggest single decode win |
 | Adaptive KV ring | the conversation memory window resizes to the request | **+9–11% decode at depth** |
 | `--prefill auto` + PA_FAST/FUSED/RING512 | chunk long prompts; three prefill knobs | **+26%**, then **+13.8%** combined |
@@ -76,10 +76,14 @@ These are the findings that matter most to future work — each one is a door we
 | **Window re-shaping / pre-draft skipping** for a session-lookup drafter | replace neural drafts with session-history drafts on repetitive text | drafts **convert** (24% accepted) but every implemented form measured **−4 to −13% slower** drift-matched — accepted drafts ≠ cheaper windows |
 | **Cross-run comparisons** | compare separate engine instances | the first request after a start runs **~12% faster** (freshness artifact) and identical prompts produce different token counts across instances (110–222!) — only within-process, token-matched comparisons are valid |
 
-The pattern across all of these: **decode on this stack is at a serialization floor** — the
-device is busy ~73% of the burst and the remaining gaps are structural hand-offs, not waste.
-That's why ~85 ideas measured negative: the easy wins were taken first, and the rest are
-genuinely at the wall.
+The pattern across all of these: the device is busy **~73% of the decode burst** (single
+request, one measured pass) and every scheduling/overlap lever attempted so far measured flat
+or negative — the remaining gaps are structural hand-offs, not idle waste. Two honest limits
+on that statement: the busy 73% is one measured pass, not a proof of optimality (a busy GPU
+can still run an inefficient schedule — the trace localizes where to look, it does not bound
+how much faster the busy part could run); and the busy figure is regime-specific (single
+request; multi-request serving measured differently). That's why ~85 ideas measured negative:
+the easy wins were taken first, and the rest have so far resisted measurement.
 
 ## What's genuinely left open
 
