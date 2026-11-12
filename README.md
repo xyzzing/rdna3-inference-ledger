@@ -1,4 +1,4 @@
-# rdna3-inference-ledger
+# qwen-rdna3-optimization-ledger
 
 Measured results from a two-month optimization campaign (Sep 28 – Nov 12, 2026) serving a
 **Qwen3.8 Flash-Next MoE** checkpoint (IQ3_S, mixed q8_0/bf16 pack) on a single
