@@ -21,6 +21,16 @@ fixed protocol.
   mystery settled by a noise floor, a performance question closed by arithmetic, and the
   session-lookup idea chased from paper claim to drift-matched refutation.
 
+## Contributing
+
+**Community contributions are welcome — humans and agents.** Start with
+**[CONTRIBUTING.md](CONTRIBUTING.md)**: how to propose and record experiments as GitHub issues,
+the evidence-packet format (`experiments/issue-<number>/`), the correctness and timing gates,
+the one-scope verdict vocabulary (PASS / NEGATIVE / INCONCLUSIVE / VOID / BLOCKED), and the
+review checklist. Bottleneck measurements, independent reproductions, corrections, minimal
+bug reproducers, and well-supported negatives are all first-class contributions — hardware
+owners and analysis-only contributors alike.
+
 ## The arc in three numbers
 
 | | First light (Sep 28) | porting-era peak (Oct 20) | Deployed (Nov 7+) |
