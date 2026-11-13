@@ -17,6 +17,10 @@ fixed protocol.
 
 - **[Where we are](where-we-are.md)** — the plain-language guide: how generation works, what we
   made faster, which doors are measured shut, and **what transfers to Qwen 4** (three tiers).
+- **[Campaign update Nov 12/13](campaign-2026-11-13.md)** — the newest arc: the first matched
+  deep-vs-short depth table, the 94K penalty attributed to the proposal side (zero engine
+  code — the production binary already carried the diagnostics), and the head-repack screen
+  that closed the last bitwise candidate.
 - **[Campaign update Nov 11/12](campaign-2026-11-12.md)** — the newest arc: a correctness
   mystery settled by a noise floor, a performance question closed by arithmetic, and the
   session-lookup idea chased from paper claim to drift-matched refutation.

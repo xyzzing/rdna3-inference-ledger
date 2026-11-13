@@ -17,6 +17,11 @@ flowchart LR
     C --> D["✍️ YOUR ANSWER"]
 ```
 
+> **A note on decode numbers**: the matched-depth protocol (Nov 12/13) measures engine
+> decode at **79–94 tok/s @70–98K** — a different token-counting definition and engine vintage
+> than the 43–47 @94K figure quoted elsewhere in this ledger. Both are recorded with a
+> provenance-gap note; do not mix them in one comparison.
+
 **Prefill** is reading — every prompt token flows through the whole network once. Big matrix
 multiplies, loves tensor cores. **Decode** is writing — for every single output token, the
 hardware must essentially re-read the model's weights. Decode speed is almost entirely
@@ -74,6 +79,7 @@ These are the findings that matter most to future work — each one is a door we
 | **Host readback** | is the CPU waiting on logits it doesn't need? | the engine already reads **only token IDs** — confirmed from device traces |
 | **Expert branch overlap** | run shared and routed experts concurrently | they're **already on separate streams**; what's left is serial by real data dependencies |
 | **Window re-shaping / pre-draft skipping** for a session-lookup drafter | replace neural drafts with session-history drafts on repetitive text | drafts **convert** (24% accepted) but every implemented form measured **−4 to −13% slower** drift-matched — accepted drafts ≠ cheaper windows |
+| **94K depth penalty** | attribute the deep-context slowdown; screen the one bitwise-preserving head candidate | **attributed — proposal-side** (offered width shrinks at depth; acceptance holds at matched width); the repack screened **−7% to −41%** at every width — closed on this stack, reopening = a proposal-width mechanism |
 | **Cross-run comparisons** | compare separate engine instances | the first request after a start runs **~12% faster** (freshness artifact) and identical prompts produce different token counts across instances (110–222!) — only within-process, token-matched comparisons are valid |
 
 The pattern across all of these: the device is busy **~73% of the decode burst** (single
