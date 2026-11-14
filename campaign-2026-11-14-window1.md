@@ -164,3 +164,22 @@ against — competing for the one bench slot with the Direct4 kernel (B2), whose
 spans and the established stage rows disagree ~4.7× for the same code span, and B1 stays
 upper-bound-only (inclusive bound ≈ 12-13% of the decode wall; the optimistic bound clears the bar
 at s ≥ 1.16) until that is attributed.
+
+## Addendum 3 (same day): the discrepancy attributed, f pinned — and the bench slot decided by measurement
+
+- **The 4.7× fine-vs-stage discrepancy is ATTRIBUTED**: the pool path calls the grouped kernel
+  twice per layer (VRAM share + PCIe share) and the fine stamps fired on both — the near-empty
+  PCIe call overwrote the triple. One line fixed (VRAM-share only); post-fix the fine denominator
+  matches the stage rows within ~5-10% — **the stage rows were right all along**, and gate/up is
+  ~55% of the expert stage.
+- **B1's arithmetic, pinned on the definitive pass** (18 requests, six cells): **f = 7.56% of the
+  decode wall** (range 7.0-8.3%, depth-invariant), h = 0.986, **f×h = 7.46% — clears the 2% bar by
+  3.8×**. The Direct4 kernel's go/no-go number: **local speedup s ≥ 1.36** on the gate/up dot.
+- **The bench slot decided by measurement** (the existing expert-bench harness, real layer-17
+  weights from the pinned shard, byte-for-byte parity first, prod stopped for clean timing): the
+  donor-class fused arm is **slower** than the incumbent on every passing shape (+10% to +26%
+  all-span; every other arm +13% to +85%), bitwise equal throughout. **D1 closes as a scoped
+  negative** — production's default arm is already the best arm for the passing shapes (reopening:
+  a new kernel ≥1.60× on those shapes, bitwise-equal). **The bench slot goes to B2 (the Direct4
+  symbol-dot kernel)** with its concrete bar: beat the grid/sign-reconstruction dot by ≥1.36×,
+  or close on arithmetic.
