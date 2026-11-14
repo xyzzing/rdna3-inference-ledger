@@ -139,3 +139,28 @@ its fingerprint; ~35 min GPU total):
 The arc closes the day with the deciding capture half-won: the instrumented harness works end to
 end, the joins hold on real data, and the remaining gap is one small host-side stamp plus a
 resolved stamp-span semantics question — CPU-daytime work, one more window pass away.
+
+## Addendum 2 (same day): the shape table is IN — the donor arm-gating candidate is quantified
+
+One minimal minder packet (exact anchors, the size class that fits the worker — passed on the
+first attempt at 1.8M tokens after the oversized packets had burned 12.5M) added the pool-path
+host stamp: the CPU planner writes the (groups, entries, widest) triplet at publish into per-layer
+host slots, and the collector reads them. The definitive pass:
+
+- **143,232 keyed layer-windows, zero missing triplets**; joins clean; correctness vs the clean
+  control unchanged (only the known-nondeterministic warmup + p-reg knife-edge rows differ).
+- **43.5% of layer-windows are all-singleton** (ne == ng) — dominated by T=1 windows (43.6% of all
+  rows; a T=1 window's 10 routed entries are mostly distinct experts, so only 0.5% of T=1 windows
+  pass the donor's reuse gate).
+- **64.1% of the multi-token (T≥2) windows pass the donor width-4 gate** (widest group ≤ 4 AND
+  entry reuse ≥ 1.2) — 36.4% of all layer-windows (width-3: 25.3%, width-2: 12.4%).
+
+**The window-shape arm-gating candidate graduates from BLOCKED to quantified and bench-ready**: a
+width-4 shape rule engages the multirow arm on ~36% of layer-windows, so the +2% end-to-end bar
+needs ≈ **5.4% per-shape saving on the passing windows** (unweighted share; per-shape time
+weighting is still NOT_RUN). That is a real number the isolated paired bench can now be judged
+against — competing for the one bench slot with the Direct4 kernel (B2), whose exposure question
+(f, the gate/up-only share) remains the one open measurement-semantics question: the fine-stamp
+spans and the established stage rows disagree ~4.7× for the same code span, and B1 stays
+upper-bound-only (inclusive bound ≈ 12-13% of the decode wall; the optimistic bound clears the bar
+at s ≥ 1.16) until that is attributed.
