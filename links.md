@@ -42,4 +42,5 @@ the pre-file — code PRs only on maintainer signal.
 | Project | What it is | Relevance |
 |---|---|---|
 | [Radiance](https://codeberg.org/StillDeadcode/radiance) (Apache-2.0) | AMD-only C++/HIP engine, full gfx11 family incl. gfx1100 | independent confirmation of our i8-WMMA fragment facts in production; their MoE-GEMM expert-schedule spread (41.67→21.16 ms, same bytes) matches our attribution findings |
+| [Strata-EXL3-fork](https://github.com/nasone32/Strata-EXL3-fork) (MIT, pinned `5df35309`, branch `amd-exl3-community`) | an EXL3-capable Strata fork, audited as a donor (Nov 14 campaign) | nine mechanisms traced: five already equivalent in production here, two EXL3-specific, one peer-only, one transferable without weight change (window-shape arm gating) |
 | llama.cpp | the lineage ancestor | same-GPU/weights reference point: 18.7 tok/s decode vs our 38–43 |

@@ -91,3 +91,13 @@ checkable arithmetic from reported measurements; five corrections applied:
 The reviewer's confirmation is recorded: the lookup-bypass close survives review — conversions
 occurred on the intended edit workload and the implemented bypass still lost on matched
 committed tokens (14/15 dev, 10/10 held-out). Scope wording uses "all implemented forms".
+
+**Nov 14, 2026 — self-caught by the fingerprint re-audit (campaign page), before any reuse.**
+The Nov 13 page's "true window count 184–185, avg T = 2.47" is the p-code/94k cell's
+**first-two-requests** figure, not the deep-request population: all 18 traced requests span
+W 112–194, avg T 2.32–3.94. The page is annotated and per-cell values govern. The
+underlying measurements were not wrong — every committed-token total reconciled (77/77,
+22/22, 22/22) in the same audit; only the headline's scope was. The recheck also pinned three
+instrument traps now on the campaign page: wrapper `decode_ms` ≥ engine slice `gen_ms`
+(+14.6% worst, rows register after transmit), cache-served repeat requests emit no new rows,
+and the Nov 12/13 deep-request `W` is `W_est` (an estimate, not a measurement).

@@ -42,7 +42,7 @@ Two tricks make decode survivable:
 
 | | count |
 |---|---|
-| Recorded experiments | **~125** |
+| Recorded experiments | **~129** |
 | Adopted into the deployed stack | ~20 |
 | Rejected with paired measurements | **~85** |
 | Timing windows run | one at a time, always with a pre-registered gate |
@@ -98,6 +98,7 @@ the easy wins were taken first, and the rest have so far resisted measurement.
 | A device fault in chunked prefill (bug filed upstream, [#5539](https://github.com/Niko1221/Strata/issues/5539)) — the fix would be ~45% faster long prompts | waiting on upstream |
 | A compiler bug that silently fuses rounding steps ([ROCm #5330](https://github.com/ROCm/llvm-project/issues/5330)) — matters for anyone needing bit-exact GPU math | waiting on upstream |
 | Multi-request serving (two jobs at once) | headroom measured: a *short* second job fits; two full 94K sessions don't |
+| Two pricing gaps, one capture from resolution | the IQ3_S→Direct4 integer-dot cache (**format proven**: the codebook is 16 signed levels, exact mapping exhibited; exposure `f×h` unpriced) and window-shape arm gating from an EXL3 donor audit — a single correctness-only capture (gate/up stage taps + residency counter, strings-check first) decides both ([campaign Nov 14](campaign-2026-11-14.md)) |
 | Time-to-first-token as its own product | separate objective, separate scorecard |
 | The next model generation | see below |
 

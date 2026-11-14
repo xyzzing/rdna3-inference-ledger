@@ -1,12 +1,12 @@
 # qwen-rdna3-optimization-ledger
 
-Measured results from a two-month optimization campaign (Sep 28 – Nov 12, 2026) serving a
+Measured results from a two-month optimization campaign (Sep 28 – Nov 14, 2026) serving a
 **Qwen3.8 Flash-Next MoE** checkpoint (IQ3_S, mixed q8_0/bf16 pack) on a single
 **RX 7900 XTX** (gfx1100 / RDNA3, 24 GiB), with a HIP inference engine — a fork of
 [Strata](https://github.com/Niko1221/Strata) (llama.cpp-derived lineage) plus a later
 independent core study.
 
-**~125 recorded experiments: ~20 adopted, ~85 rejected with paired measurements.** The rejected corpus is the asset. RDNA3 optimization advice is dominated by CUDA
+**~129 recorded experiments: ~20 adopted, ~85 rejected with paired measurements.** The rejected corpus is the asset. RDNA3 optimization advice is dominated by CUDA
 folklore transferred by analogy, and most of it does not survive contact with this hardware:
 NVIDIA's own Q8_0 multi-column layout measured **−17 to −22% on RDNA3**; a 22.7%-fewer-bytes KV
 format measured **−24% on prefill**; "kernel that wins in isolation" measured **−1.75 to −3.34%
@@ -17,13 +17,18 @@ fixed protocol.
 
 - **[Where we are](where-we-are.md)** — the plain-language guide: how generation works, what we
   made faster, which doors are measured shut, and **what transfers to Qwen 4** (three tiers).
-- **[Campaign update Nov 12/13](campaign-2026-11-13.md)** — the newest arc: the first matched
-  deep-vs-short depth table, the 94K penalty attributed to the proposal side (zero engine
-  code — the production binary already carried the diagnostics), and the head-repack screen
-  that closed the last bitwise candidate.
-- **[Campaign update Nov 11/12](campaign-2026-11-12.md)** — the newest arc: a correctness
-  mystery settled by a noise floor, a performance question closed by arithmetic, and the
-  session-lookup idea chased from paper claim to drift-matched refutation.
+- **[Campaign update Nov 14](campaign-2026-11-14.md)** — the newest entry, a zero-GPU audit
+  round: one self-caught correction to the Nov 13 headline (per-cell, not population), the
+  min-p drafter gate pinned as a run-length stop rule, and an enumeration overturning the
+  round plan's own premise — **the IQ3_S codebook is 16 signed levels, not ~125**, so the
+  format side of a Direct4 integer-dot cache is proven; exposure is one deciding window away.
+- **[Campaign update Nov 12/13](campaign-2026-11-13.md)** — the first matched deep-vs-short
+  depth table, the 94K penalty attributed to the proposal side (zero engine code — the
+  production binary already carried the diagnostics), and the head-repack screen that closed
+  the last bitwise candidate.
+- **[Campaign update Nov 11/12](campaign-2026-11-12.md)** — a correctness mystery settled by a
+  noise floor, a performance question closed by arithmetic, and the session-lookup idea chased
+  from paper claim to drift-matched refutation.
 
 ## Contributing
 
@@ -83,12 +88,15 @@ after the fact. Keep every raw row, failed run and exclusion reason. Uninstrumen
 the only performance authority; instrument traces must disclose their perturbation. Full protocol
 and the ratio-definition ledger: [methodology.md](methodology.md).
 
-## Status (2026-11-11)
+## Status (2026-11-14)
 
 The board is fully dispositioned: **zero promotions across the final ~12-experiment campaign**;
 the deployed stack stands on the adopted set; every remaining item is an upstream wait
-([open-upstream.md](open-upstream.md)). The campaign's most valuable export is the negative
-knowledge plus the measurement rules that made each close cheap.
+([open-upstream.md](open-upstream.md)) — except one: a single correctness-only capture
+(strings-check first; it may cost zero code) prices or closes both remaining local candidates,
+the IQ3_S→Direct4 exposure and the EXL3 window-shape arm-gating candidate
+([campaign Nov 14](campaign-2026-11-14.md)). The campaign's most valuable export is the
+negative knowledge plus the measurement rules that made each close cheap.
 
 ## License
 
