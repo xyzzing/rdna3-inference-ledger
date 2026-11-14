@@ -183,3 +183,26 @@ at s ≥ 1.16) until that is attributed.
   a new kernel ≥1.60× on those shapes, bitwise-equal). **The bench slot goes to B2 (the Direct4
   symbol-dot kernel)** with its concrete bar: beat the grid/sign-reconstruction dot by ≥1.36×,
   or close on arithmetic.
+
+## Addendum 4 (same session): B2 implemented, benched, CLOSED — and the mechanism-level answer
+
+The Direct4 gate/up kernel (`STRATA_GU_D4`-gated, gu_type 21) + the bench's D4 arm (a host blob
+converter) were built by a minder packet plus three frontier build fixes. **The bench verdict**
+(real layer-17 weights, byte-for-byte parity first, 100 iters, prod stopped): the D4 gate/up is
+**bitwise-equal to the production dot on every shape** — the converter, the kernel, and the
+activation-sum correction are all CORRECT — and its speed is **1.04× / 0.89× / 1.11×** on the three
+bench shapes against the required **≥1.36×**. **The candidate closes on its go/no-go arithmetic.**
+
+The mechanism-level answer matters more than the number: the production gate/up dot runs at
+~577 GB/s — **bandwidth-bound** — so the grid/sign reconstruction the format removes was nearly free
+next to the weight reads, while the lossless Direct4 payload moves **+22% bytes** (134 vs 110 B per
+block). A lossless reformat of a bandwidth-bound kernel cannot win. The same lesson class as the
+Nov 13 head-repack screen (a bitwise-equal reformat that lost on access pattern), now with the
+mechanism named.
+
+**The window-1 arc's final answer: both candidates measured to closure.** D1 (the donor shape
+rule) closed — every alternative arm slower on the passing shapes; B2 (Direct4) closed — bitwise
+equal, 1.04× vs 1.36×. The 2% decode bar has no qualifying candidate on this stack, and the
+reopening doors are now measured shut rather than assumed: the selector family (0063-0066), the
+head repack (0065), the shape rule (D1), the lossless reformat (B2), and block verification
+(INAPPLICABLE for greedy production). What would reopen a door is named in each closure.
