@@ -108,3 +108,34 @@ NOT_RUN; the window itself is **requested, not granted** — it runs when the op
 Closed negatives untouched. The block-verification closure and the preflight's upper-bound figure
 are recorded in [rejected/drafter.md](rejected/drafter.md) and this page respectively; the
 toolchain lessons gained four entries ([lessons/toolchain.md](lessons/toolchain.md)).
+
+## Addendum (same day): the window RAN — taps emit, keys clean, and the pool path turned out to be the only path
+
+The operator granted the re-request. Five diagnostic passes ran against the instrumented binary
+(one control + two instrumented + three debug/minimal; every pass restored production and verified
+its fingerprint; ~35 min GPU total):
+
+- **All three taps emit in serve.** ~170k keyed per-(request, window, layer) shape rows per pass;
+  per-request anchor stamping works; the parser joins clean on the real capture after two recorded
+  rule refinements (req=0-only slices are the batch-warmup bucket; mixed slices are the slicer's
+  region spanning a warmup and the next keyed request — true anomalies stay hard-fail).
+- **Correctness vs the clean control holds**: committed-token counts differ on only the
+  known-nondeterministic rows (sacrificial warmups + the p-reg EOS-knife-edge cells); every 94K
+  cell and every p-code/p-zh cell matches.
+- **Two real instrumentation defects were found and fixed in-flight** (a stamp-slot index bug that
+  silently zeroed the gate/up denominator; an unsound cross-buffer span comparison — the per-window
+  copy races the pipelined next window's execution), both by a one-pass debug print and both fixed
+  before the definitive pass.
+- **The honest outcome**: the deployment's windows turn out to run the CPU-pool plan path on every
+  window (the expert cache is a hot set — whole-model residency never holds), so the device-side
+  triplet route covers a path that never executes and the shape rows printed `-1`; and the fine
+  gate/up spans are internally inconsistent with the established stage rows by ~4.7×, which the
+  session could not attribute. Per the labeling rules: **B1 stays upper-bound-only** (inclusive
+  expert-stage bound ≈ 12-13% of the decode wall; with h ≈ 0.985 the optimistic bound clears the
+  2% bar at s ≥ ~1.16 — but f itself is unpinned), and **D0's shape table stays BLOCKED** on one
+  precisely-named missing piece: the pool-path host stamp at the planner publish, where the
+  (groups, entries, widest) triplet is already known host-side.
+
+The arc closes the day with the deciding capture half-won: the instrumented harness works end to
+end, the joins hold on real data, and the remaining gap is one small host-side stamp plus a
+resolved stamp-span semantics question — CPU-daytime work, one more window pass away.
