@@ -63,3 +63,22 @@ write device code on ROCm/RDNA3, read this before trusting a parity result.
 - **Env-gated branch ladders are baseline selectors.** Pin the production dispatch configuration
   (which branches are live) before choosing what you're measuring against — one 1.39× "win" was
   real but measured against a path production never runs (the production branch was ~4.5× faster).
+- **A coding worker's context ceiling is a wall, not a nudge** (Nov 14): four packet runs across two
+  rounds died at the worker's 131,072-token conversation limit — the last 428 tokens over — once the
+  packet carried real specifications plus its own scaffolding. A context-bounded packet body still
+  does not fit. The recovery pattern that worked: verify whatever partial output is real, reject
+  skeletons that cite nonexistent evidence, finish the packet from pinned evidence at the frontier,
+  and disclose the executor change in the record.
+- **Frontier-direct execution is a legitimate fallback — with disclosure** (Nov 14): when the worker
+  is functionally unavailable and the spec is fully pinned, implementing at the frontier and recording
+  who executed the packet keeps the round honest. The fresh-eyes review that followed caught two real
+  pre-GPU defects (an unordered cross-thread read; an environment combination that would have orphaned
+  every instrumented row) — the review paid for itself before the window was spent.
+- **An AppImage-style desktop environment can silently break the system cmake**: with
+  `LD_LIBRARY_PATH` pointed into the app's bundled libraries, the system cmake fails with
+  "Could not find CMAKE_ROOT" while `--version` still works. Clear `LD_LIBRARY_PATH` for builds; the
+  same class as a masked `sys.executable`.
+- **Reproduce a build from its CMakeCache, not from the docs** (Nov 14): the documented cmake command
+  alone missed `hip_DIR`, the pinned HIP compiler and the `--hip-path/--rocm-path` flags the working
+  build carried — the documented shortcut failed on system-header/OCML mismatches. The cache is the
+  recipe of record.

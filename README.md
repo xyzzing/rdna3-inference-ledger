@@ -17,7 +17,13 @@ fixed protocol.
 
 - **[Where we are](where-we-are.md)** — the plain-language guide: how generation works, what we
   made faster, which doors are measured shut, and **what transfers to Qwen 4** (three tiers).
-- **[Campaign update Nov 14](campaign-2026-11-14.md)** — the newest entry, a zero-GPU audit
+- **[Campaign update Nov 14 — window-1 arc](campaign-2026-11-14-window1.md)** — the newest entry:
+  the deciding capture for the two remaining kernel ideas prepared end to end on CPU — a worker
+  context ceiling hit and the frontier finished the audit itself, **block verification measured
+  INAPPLICABLE for greedy production** (the block law commits the same prefix as the equality scan;
+  zero gain is forced), three default-off taps implemented with the parser failing closed, and a
+  fresh-eyes review rejecting the first build on two real defects before any GPU request.
+- **[Campaign update Nov 14](campaign-2026-11-14.md)** — the same day, a zero-GPU audit
   round: one self-caught correction to the Nov 13 headline (per-cell, not population), the
   min-p drafter gate pinned as a run-length stop rule, and an enumeration overturning the
   round plan's own premise — **the IQ3_S codebook is 16 signed levels, not ~125**, so the
